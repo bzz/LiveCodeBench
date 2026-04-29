@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 try:
     from anthropic import HUMAN_PROMPT, AI_PROMPT
@@ -8,6 +9,8 @@ except ImportError:
 
 from lcb_runner.lm_styles import LMStyle
 from lcb_runner.benchmarks.code_generation import CodeGenerationProblem
+
+_FEW_SHOT_DIR = Path(__file__).parent / "few_shot_examples" / "generation"
 
 
 class PromptConstants:
@@ -166,10 +169,10 @@ def get_deepseek_r1_question_template_answer(question: CodeGenerationProblem):
     return prompt
 
 
-with open("lcb_runner/prompts/few_shot_examples/generation/func.json") as f:
+with open(_FEW_SHOT_DIR / "func.json") as f:
     func = json.load(f)
 
-with open("lcb_runner/prompts/few_shot_examples/generation/stdin.json") as f:
+with open(_FEW_SHOT_DIR / "stdin.json") as f:
     stdin = json.load(f)
 
 
