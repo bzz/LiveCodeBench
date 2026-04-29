@@ -2,6 +2,7 @@ import json
 import zlib
 import pickle
 import base64
+import itertools
 from enum import Enum
 from datetime import datetime
 from dataclasses import dataclass
@@ -121,9 +122,16 @@ class CodeGenerationProblem:
         }
 
 
-def load_code_generation_dataset(release_version="release_v1", start_date=None, end_date=None) -> list[CodeGenerationProblem]:
-    dataset = load_dataset("livecodebench/code_generation_lite", split="test", version_tag=release_version, trust_remote_code=True)
-    dataset = [CodeGenerationProblem(**p) for p in dataset]  # type: ignore
+def load_code_generation_dataset(release_version="release_v1", start_date=None, end_date=None, limit=None) -> list[CodeGenerationProblem]:
+    if limit is not None:
+        # Stream and stop after `limit` rows so we don't pull every multi-GB shard
+        # for debug runs. Order is whatever the loader yields first, not question_id-sorted.
+        streaming = load_dataset("livecodebench/code_generation_lite", split="test", version_tag=release_version, trust_remote_code=True, streaming=True)
+        rows = list(itertools.islice(streaming, limit))
+        dataset = [CodeGenerationProblem(**p) for p in rows]  # type: ignore
+    else:
+        dataset = load_dataset("livecodebench/code_generation_lite", split="test", version_tag=release_version, trust_remote_code=True)
+        dataset = [CodeGenerationProblem(**p) for p in dataset]  # type: ignore
     if start_date is not None:
         p_start_date = datetime.strptime(start_date, "%Y-%m-%d")
         dataset = [e for e in dataset if p_start_date <= e.contest_date]

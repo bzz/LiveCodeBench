@@ -82,7 +82,14 @@ def get_args():
     parser.add_argument(
         "--cache_batch_size", type=int, default=100, help="Batch size for caching"
     )
-    parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument(
+        "--debug",
+        type=int,
+        nargs="?",
+        const=15,
+        default=None,
+        help="Debug mode: limit benchmark to first N problems (default 15 if flag passed bare)",
+    )
     parser.add_argument("--evaluate", action="store_true", help="Evaluate the results")
     parser.add_argument(
         "--num_process_evaluate",

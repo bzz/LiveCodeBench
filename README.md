@@ -12,6 +12,11 @@ Official repository for the paper "LiveCodeBench: Holistic and Contamination Fre
 LiveCodeBench provides holistic and contamination-free evaluation of coding capabilities of LLMs.  Particularly, LiveCodeBench continuously collects new problems over time from contests across three competition platforms -- LeetCode, AtCoder, and CodeForces. Next, LiveCodeBench also focuses on a broader range of code-related capabilities, such as self-repair, code execution, and test output prediction, beyond just code generation. Currently, LiveCodeBench hosts four hundred high-quality coding problems that were published between May 2023 and March 2024.
 
 
+## Fork changes
+
+This fork makes `--debug` accept an optional integer (`--debug 10`, `--debug 25`; bare `--debug` keeps the original default of 15). When `--debug` is set, the code-generation / self-repair benchmarks are loaded with HuggingFace `streaming=True` and stopped via `itertools.islice(..., N)`, so only as many JSONL shards as needed are pulled — useful for `release_v6`, where a full load is ~2.5 GB. Trade-off: streamed rows arrive in the loader's natural order, so the first N are not the lex-sorted-by-`question_id` first N. For matching `codegeneration` → `selfrepair` runs, use the same `--debug N` on both commands and they'll line up. Requires `datasets<4.0`.
+
+
 ## Installation
 You can clone the repository using the following command:
 

@@ -22,7 +22,7 @@ def main():
     benchmark, format_prompt = build_prompt_benchmark(args)
     if args.debug:
         print(f"Running with {len(benchmark)} instances in debug mode")
-        benchmark = benchmark[:15]
+        benchmark = benchmark[: args.debug]
 
     output_path = get_output_path(model.model_repr, args)
     eval_file = output_path.replace(".json", "_eval.json")
